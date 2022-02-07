@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<%- include('./components/head.ejs') %>
+
+<body>
+
+    <%- include('./components/nav.ejs') %>
+
+    <div class="container">
+        <ul class="collection with-header">
+            <li class="collection-header">
+                <h4>Todo list</h4>
+            </li>
+
+            <% if (items.length > 0) { %>
+
+            <% items.forEach(item => { %>
+            <li class="collection-item">
+
+                <div><a
+                        href="/items/<%= item._id %> ">NAME:<%= item.name %><span><br></span>PRICE:$<%= item.price %></a>
+                    <a href="#!" class="secondary-content">
+                        <i id="deleteBtn" data-id="<%= item._id %>" class="material-icons">delete</i>
+                        <i id="updateBtn" data-id="<%= item._id %>" class="material-icons modal-trigger"
+                            href="#modal1">edit</i></a></div>
+            </li>
+            <% }); %>
+
+
+            <% } else { %>
+            <li>There is no items</li>
+            <% } %>
+
+        </ul>
+
+    </div>
+    <div id="modal1" class="modal">
+        <div class="modal-content">
+            <h4>Edit Items</h4>
+            <form id="edit_item" action="PUT">
+                <input type="text" name="name" placeholder="item name">
+                <input type="number" placeholder="item price" name="price">
+                <button class="btn">update</button>
+            </form>
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var elems = document.querySelectorAll('.modal');
+            var instances = M.Modal.init(elems);
+        });
+
+        // updatefunction
+        edit_item.onsubmit = async function (e) {
+            e.preventDefault();
+            let data = new FormData(edit_item)
+            const updateid = updateBtn.dataset.id
+            const updateendpoint = `/api/update/${updateid}`
+            let respone = await fetch(updateendpoint, {
+                method: 'PUT',
+                body: new URLSearchParams(data),
+                headers: new Headers({
+                    'Content-type': 'application/x-www-form-urlencoded; charset=UTF-8'
+                })
+            })
+            let result = await respone.json()
+            edit_item.reset();
+            window.location.reload();
+            // alert(result.msg)
+        }
+
+        // deletefunction
+        deleteBtn.onclick = function (e) {
+            e.preventDefault();
+            const deleteid = deleteBtn.dataset.id
+            console.log('deleted')
+            const endpoint = `/api/delete/${deleteid}`
+            fetch(endpoint, {
+                method: 'DELETE'
+            }).then(() => {
+                window.location.reload()
+            })
+        }
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<%- include('./components/head.ejs') %>
+
+<body>
+
+    <nav class="grey darken-1">
+        <div class="nav-wrapper container">
+            <a href="/" class="brand-logo left">TODO</a>
+            <ul id="nav-mobile" class="right">
+                <li><a href="../add-items">ADD-ITEMS</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div>
+            <h4>Item Detail</h4>
+            <h5>Name: <%= item.name %> </h5>
+            <h5>Price: <%= item.price %> </h5>
+            <a id="deleteBtn" class="delete btn" href="" data-id="<%= item._id %> ">Delete</a>
+        </div>
+    </div>
+
+    <script>
+        deleteBtn.onclick = function (e) {
+            e.preventDefault();
+            const id = deleteBtn.dataset.id
+            console.log('deleted')
+            const endpoint = `/api/delete/${id}`
+            fetch(endpoint, {
+                method: 'DELETE'
+            }).then(res => res.json()).then(data=>{
+                window.location.href = data.redirect
+            })
+        }
+    </script>
+</body>
+
+</html>
